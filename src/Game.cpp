@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "SceneMain.h"
+#include <SDL_image.h>
 
 Game::Game()
 {
@@ -17,7 +18,7 @@ void Game::init()
     SDL_Log("初始化游戏");
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL 初始化失败: %s", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL初始化失败: %s", SDL_GetError());
         isRunning = false;
         return;
     }
@@ -27,7 +28,7 @@ void Game::init()
     window = SDL_CreateWindow(windowTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);
     if (window == nullptr)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL 窗口创建失败: %s", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL窗口创建失败: %s", SDL_GetError());
         isRunning = false;
         return;
     }
@@ -37,7 +38,16 @@ void Game::init()
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == nullptr)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL 渲染器创建失败: %s", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL渲染器创建失败: %s", SDL_GetError());
+        isRunning = false;
+        return;
+    }
+
+    // 初始化 SDL_image
+    SDL_Log("初始化图片装载器");
+    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL图片装载器初始化失败: %s", IMG_GetError());
         isRunning = false;
         return;
     }
@@ -45,6 +55,8 @@ void Game::init()
     // 初始化主场景
     SDL_Log("初始化主场景");
     currentScene = new SceneMain();
+    currentScene->init();
+
     isRunning = true;
 }
 
@@ -66,6 +78,13 @@ void Game::handleEvent(SDL_Event *event)
         if (event->type == SDL_QUIT)
         {
             isRunning = false;
+        }
+        else if (event->type == SDL_KEYDOWN)
+        {
+            if (event->key.keysym.sym == SDLK_ESCAPE)
+            {
+                isRunning = false;
+            }
         }
 
         if (currentScene != nullptr)
@@ -97,6 +116,9 @@ void Game::clean()
         currentScene->clean();
         delete currentScene;
     }
+
+    // 清理 SDL_image
+    IMG_Quit();
 
     // 销毁渲染器和窗口
     SDL_DestroyRenderer(renderer);

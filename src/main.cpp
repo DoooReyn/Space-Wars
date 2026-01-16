@@ -2,7 +2,7 @@
 
 int main(int, char const **)
 {
-    Game game;
+    Game &game = Game::getInstance();
     game.init();
     game.run();
 
