@@ -25,9 +25,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/dist)
 # 查找并载入Cmake预设
 find_package(SDL2 REQUIRED COMPONENTS SDL2)
 find_package(SDL2_image REQUIRED)
+find_package(SDL2_mixer REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 
 # 添加可执行文件
 add_executable(${EXE_NAME} main.cpp)
 
 # 链接库
-target_link_libraries(${EXE_NAME} PRIVATE ${SDL2_LIBRARIES} SDL2_image::SDL2_image)
+target_link_libraries(${EXE_NAME} PRIVATE ${SDL2_LIBRARIES} SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer SDL2_ttf::SDL2_ttf)
