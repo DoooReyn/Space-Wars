@@ -24,7 +24,7 @@ void SceneMain::init()
     SDL_QueryTexture(player.texture, nullptr, nullptr, &player.width, &player.height);
     player.width /= 4;
     player.height /= 4;
-    player.speed = 2;
+    player.speed = 300;
     player.position.x = game.getWindowWidth() / 2 - player.width / 2;
     player.position.y = game.getWindowHeight() - player.height;
 }
@@ -33,60 +33,67 @@ void SceneMain::handleEvent(SDL_Event *)
 {
 }
 
-void SceneMain::keyboardControl()
+void SceneMain::keyboardControl(float deltaTime)
 {
     // 控制主角移动
+    auto controlled = false;
     auto state = SDL_GetKeyboardState(nullptr);
     if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A])
     {
-        player.position.x -= player.speed;
+        player.position.x -= player.speed * deltaTime;
+        controlled = true;
     }
     if (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D])
     {
-        player.position.x += player.speed;
+        player.position.x += player.speed * deltaTime;
+        controlled = true;
     }
     if (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W])
     {
-        player.position.y -= player.speed;
+        player.position.y -= player.speed * deltaTime;
+        controlled = true;
     }
     if (state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S])
     {
-        player.position.y += player.speed;
+        player.position.y += player.speed * deltaTime;
+        controlled = true;
     }
     // 限制活动区域
-    if (player.position.x < 0)
+    if (controlled)
     {
-        player.position.x = 0;
-    }
-    if (player.position.x > game.getWindowWidth() - player.width)
-    {
-        player.position.x = game.getWindowWidth() - player.width;
-    }
-    if (player.position.y < 0)
-    {
-        player.position.y = 0;
-    }
-    if (player.position.y > game.getWindowHeight() - player.height)
-    {
-        player.position.y = game.getWindowHeight() - player.height;
+        if (player.position.x < 0)
+        {
+            player.position.x = 0;
+        }
+        if (player.position.x > game.getWindowWidth() - player.width)
+        {
+            player.position.x = game.getWindowWidth() - player.width;
+        }
+        if (player.position.y < 0)
+        {
+            player.position.y = 0;
+        }
+        if (player.position.y > game.getWindowHeight() - player.height)
+        {
+            player.position.y = game.getWindowHeight() - player.height;
+        }
     }
 }
 
 void SceneMain::render()
 {
-    // SDL_Log("SceneMain::render");
-    SDL_Rect rect = {
-        static_cast<int>(player.position.x),
-        static_cast<int>(player.position.y),
-        player.width,
-        player.height,
+    SDL_FRect rect = {
+        player.position.x,
+        player.position.y,
+        player.width * 1.f,
+        player.height * 1.f,
     };
-    SDL_RenderCopy(game.getRenderer(), player.texture, nullptr, &rect);
+    SDL_RenderCopyF(game.getRenderer(), player.texture, nullptr, &rect);
 }
 
-void SceneMain::update()
+void SceneMain::update(float deltaTime)
 {
-    keyboardControl();
+    keyboardControl(deltaTime);
 }
 
 void SceneMain::clean()

@@ -47,7 +47,7 @@ public:
 
 protected:
     void handleEvent(SDL_Event *event);
-    void update();
+    void update(float deltaTime);
     void render();
 
 private:
@@ -61,9 +61,13 @@ private:
     Scene *currentScene;
 
     const char *windowTitle = "Star Wars";
-    int windowWidth = 600;
-    int windowHeight = 800;
+    int windowWidth = 640;
+    int windowHeight = 960;
     bool isRunning = false;
+
+    int fps = 60;
+    Uint32 frameTime = 0;
+    float deltaTime = 0;
 };
 
 #endif // GAME_H

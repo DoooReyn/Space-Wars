@@ -14,6 +14,9 @@ Game::~Game()
 
 void Game::init()
 {
+    frameTime = 1000 / fps;
+    deltaTime = frameTime / 1000.0f;
+
     // 初始化
     SDL_Log("初始化游戏");
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -64,10 +67,24 @@ void Game::run()
 {
     while (isRunning)
     {
+        auto frameStart = SDL_GetTicks();
+
         SDL_Event event;
         handleEvent(&event);
-        update();
+        update(deltaTime);
         render();
+
+        auto frameEnd = SDL_GetTicks();
+        auto diff = frameEnd - frameStart;
+        if (diff < frameTime)
+        {
+            SDL_Delay(frameTime - diff);
+            deltaTime = frameTime / 1000.0f;
+        }
+        else
+        {
+            deltaTime = diff / 1000.0f;
+        }
     }
 }
 
@@ -93,10 +110,10 @@ void Game::handleEvent(SDL_Event *event)
         }
     }
 }
-void Game::update()
+void Game::update(float deltaTime)
 {
     if (currentScene != nullptr)
-        currentScene->update();
+        currentScene->update(deltaTime);
 }
 void Game::render()
 {
