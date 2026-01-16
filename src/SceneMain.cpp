@@ -20,17 +20,56 @@ void SceneMain::init()
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "加载主角纹理失败: %s", IMG_GetError());
         return;
     }
-    
+
     SDL_QueryTexture(player.texture, nullptr, nullptr, &player.width, &player.height);
     player.width /= 4;
     player.height /= 4;
+    player.speed = 2;
     player.position.x = game.getWindowWidth() / 2 - player.width / 2;
     player.position.y = game.getWindowHeight() - player.height;
 }
 
-void SceneMain::handleEvent(SDL_Event *event)
+void SceneMain::handleEvent(SDL_Event *)
 {
-    // SDL_Log("SceneMain::handleEvent: %d", event->type);
+}
+
+void SceneMain::keyboardControl()
+{
+    // 控制主角移动
+    auto state = SDL_GetKeyboardState(nullptr);
+    if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A])
+    {
+        player.position.x -= player.speed;
+    }
+    if (state[SDL_SCANCODE_RIGHT] || state[SDL_SCANCODE_D])
+    {
+        player.position.x += player.speed;
+    }
+    if (state[SDL_SCANCODE_UP] || state[SDL_SCANCODE_W])
+    {
+        player.position.y -= player.speed;
+    }
+    if (state[SDL_SCANCODE_DOWN] || state[SDL_SCANCODE_S])
+    {
+        player.position.y += player.speed;
+    }
+    // 限制活动区域
+    if (player.position.x < 0)
+    {
+        player.position.x = 0;
+    }
+    if (player.position.x > game.getWindowWidth() - player.width)
+    {
+        player.position.x = game.getWindowWidth() - player.width;
+    }
+    if (player.position.y < 0)
+    {
+        player.position.y = 0;
+    }
+    if (player.position.y > game.getWindowHeight() - player.height)
+    {
+        player.position.y = game.getWindowHeight() - player.height;
+    }
 }
 
 void SceneMain::render()
@@ -47,7 +86,7 @@ void SceneMain::render()
 
 void SceneMain::update()
 {
-    // SDL_Log("SceneMain::update");
+    keyboardControl();
 }
 
 void SceneMain::clean()

@@ -17,9 +17,11 @@ public:
     void clean() override;
     void handleEvent(SDL_Event *event) override;
 
-private:
+    
+    private:
     Game &game;
     Player player;
+    void keyboardControl();
 };
 
 #endif // SCENEMAIN_H
