@@ -64,8 +64,8 @@ private:
     int windowHeight = 960;
     bool isRunning = false;
 
-    int fps = 60;
-    Uint32 frameTime = 0;
+    float fps = 60.f;
+    float frameTime = 0;
     float deltaTime = 0;
 };
 
