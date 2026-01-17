@@ -64,9 +64,10 @@ private:
     int windowHeight = 960;
     bool isRunning = false;
 
-    float fps = 60.f;
-    float frameTime = 0;
+    const float fps = 60.f;
+    const float frameTime = 1000.f / fps;
     float deltaTime = 0;
+    Uint32 currentFps = 0;
 };
 
 #endif // GAME_H

@@ -11,9 +11,6 @@ Game::~Game() {
 }
 
 void Game::init() {
-    frameTime = 1000.f / fps;
-    deltaTime = frameTime / 1000.0f;
-
     // 初始化
     SDL_Log("初始化游戏");
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -75,14 +72,15 @@ void Game::run() {
             SDL_Delay(static_cast<Uint32>(frameTime - frameElapsed));
             deltaTime = frameTime / 1000.f;
         } else {
-            deltaTime = frameElapsed / 1000.0f;
+            deltaTime = frameElapsed / 1000.f;
         }
         counts++;
         accumulator += deltaTime;
 
-        if (frameEnd - counter > 500) {
-            const auto average = accumulator / static_cast<float>(counts);
-            // SDL_Log("帧率: %d", static_cast<Uint8>(1.0f / average));
+        if (frameEnd - counter > 1000) {
+            const auto avg = accumulator / static_cast<float>(counts);
+            currentFps = static_cast<Uint32>(1.f / avg);
+            // SDL_Log("帧率: %d", currentFps);
             counts = 0;
             accumulator = 0.0f;
             counter = frameEnd;
