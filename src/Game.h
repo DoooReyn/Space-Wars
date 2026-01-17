@@ -11,6 +11,10 @@ public:
         return instance;
     }
 
+
+    Game(const Game &) = delete; // 明确禁止拷贝（public + deleted）
+    Game &operator=(const Game &) = delete; // 明确禁止拷贝赋值
+
     ~Game();
 
     void init();
@@ -21,11 +25,11 @@ public:
 
     void changeScene(Scene *scene);
 
-    SDL_Renderer *getRenderer() {
+    [[nodiscard]] SDL_Renderer *getRenderer() const {
         return renderer;
     }
 
-    SDL_Window *getWindow() {
+    [[nodiscard]] SDL_Window *getWindow() const {
         return window;
     }
 
@@ -50,11 +54,6 @@ protected:
 
 private:
     Game();
-
-    // 删除默认构造函数和拷贝构造函数
-    Game(const Game &) = delete;
-
-    Game &operator=(const Game &) = delete;
 
     SDL_Window *window{};
     SDL_Renderer *renderer{};
