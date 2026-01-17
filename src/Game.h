@@ -4,11 +4,9 @@
 #include "Scene.h"
 #include <SDL.h>
 
-class Game
-{
+class Game {
 public:
-    static Game &getInstance()
-    {
+    static Game &getInstance() {
         static Game instance;
         return instance;
     }
@@ -16,49 +14,51 @@ public:
     ~Game();
 
     void init();
+
     void run();
-    void clean();
+
+    void clean() const;
+
     void changeScene(Scene *scene);
 
-    SDL_Renderer *getRenderer()
-    {
+    SDL_Renderer *getRenderer() {
         return renderer;
     }
 
-    SDL_Window *getWindow()
-    {
+    SDL_Window *getWindow() {
         return window;
     }
 
-    int getWindowWidth()
-    {
+    [[nodiscard]] int getWindowWidth() const {
         return windowWidth;
     }
 
-    int getWindowHeight()
-    {
+    [[nodiscard]] int getWindowHeight() const {
         return windowHeight;
     }
 
-    bool running()
-    {
+    [[nodiscard]] bool running() const {
         return isRunning;
     }
 
 protected:
     void handleEvent(SDL_Event *event);
-    void update(float deltaTime);
-    void render();
+
+    void update(float dt) const;
+
+    void render() const;
 
 private:
     Game();
+
     // 删除默认构造函数和拷贝构造函数
     Game(const Game &) = delete;
+
     Game &operator=(const Game &) = delete;
 
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    Scene *currentScene;
+    SDL_Window *window{};
+    SDL_Renderer *renderer{};
+    Scene *currentScene{};
 
     const char *windowTitle = "Star Wars";
     int windowWidth = 640;

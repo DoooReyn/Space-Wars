@@ -3,24 +3,20 @@
 #include <SDL_image.h>
 
 Game::Game()
-{
-}
+= default;
 
-Game::~Game()
-{
+Game::~Game() {
     isRunning = false;
     clean();
 }
 
-void Game::init()
-{
+void Game::init() {
     frameTime = 1000 / fps;
-    deltaTime = frameTime / 1000.0f;
+    deltaTime = static_cast<float>(frameTime) / 1000.0f;
 
     // 初始化
     SDL_Log("初始化游戏");
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-    {
+    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL初始化失败: %s", SDL_GetError());
         isRunning = false;
         return;
@@ -28,9 +24,9 @@ void Game::init()
 
     // 创建窗口
     SDL_Log("初始化窗口");
-    window = SDL_CreateWindow(windowTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);
-    if (window == nullptr)
-    {
+    window = SDL_CreateWindow(windowTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight,
+                              SDL_WINDOW_SHOWN);
+    if (window == nullptr) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL窗口创建失败: %s", SDL_GetError());
         isRunning = false;
         return;
@@ -39,8 +35,7 @@ void Game::init()
     // 创建渲染器
     SDL_Log("初始化渲染器");
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if (renderer == nullptr)
-    {
+    if (renderer == nullptr) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL渲染器创建失败: %s", SDL_GetError());
         isRunning = false;
         return;
@@ -48,8 +43,7 @@ void Game::init()
 
     // 初始化 SDL_image
     SDL_Log("初始化图片装载器");
-    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG)
-    {
+    if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "SDL图片装载器初始化失败: %s", IMG_GetError());
         isRunning = false;
         return;
@@ -63,73 +57,57 @@ void Game::init()
     isRunning = true;
 }
 
-void Game::run()
-{
-    while (isRunning)
-    {
-        auto frameStart = SDL_GetTicks();
+void Game::run() {
+    while (isRunning) {
+        const auto frameStart = SDL_GetTicks();
 
         SDL_Event event;
         handleEvent(&event);
         update(deltaTime);
         render();
 
-        auto frameEnd = SDL_GetTicks();
-        auto diff = frameEnd - frameStart;
-        if (diff < frameTime)
-        {
+        const auto frameEnd = SDL_GetTicks();
+        if (const auto diff = frameEnd - frameStart; diff < frameTime) {
             SDL_Delay(frameTime - diff);
-            deltaTime = frameTime / 1000.0f;
-        }
-        else
-        {
-            deltaTime = diff / 1000.0f;
+            deltaTime = static_cast<float>(frameTime) / 1000.f;
+        } else {
+            deltaTime = static_cast<float>(diff) / 1000.0f;
         }
     }
 }
 
-void Game::handleEvent(SDL_Event *event)
-{
-    while (SDL_PollEvent(event))
-    {
-        if (event->type == SDL_QUIT)
-        {
+void Game::handleEvent(SDL_Event *event) {
+    while (SDL_PollEvent(event)) {
+        if (event->type == SDL_QUIT) {
             isRunning = false;
-        }
-        else if (event->type == SDL_KEYDOWN)
-        {
-            if (event->key.keysym.sym == SDLK_ESCAPE)
-            {
+        } else if (event->type == SDL_KEYDOWN) {
+            if (event->key.keysym.sym == SDLK_ESCAPE) {
                 isRunning = false;
             }
         }
 
-        if (currentScene != nullptr)
-        {
+        if (currentScene != nullptr) {
             currentScene->handleEvent(event);
         }
     }
 }
-void Game::update(float deltaTime)
-{
+
+void Game::update(const float dt) const {
     if (currentScene != nullptr)
-        currentScene->update(deltaTime);
+        currentScene->update(dt);
 }
-void Game::render()
-{
-    if (currentScene != nullptr)
-    {
+
+void Game::render() const {
+    if (currentScene != nullptr) {
         SDL_RenderClear(renderer);
         currentScene->render();
         SDL_RenderPresent(renderer);
     }
 }
 
-void Game::clean()
-{
+void Game::clean() const {
     // 销毁当前场景
-    if (currentScene != nullptr)
-    {
+    if (currentScene != nullptr) {
         currentScene->clean();
         delete currentScene;
     }
@@ -143,8 +121,7 @@ void Game::clean()
     SDL_Quit();
 }
 
-void Game::changeScene(Scene *scene)
-{
+void Game::changeScene(Scene *scene) {
     // 如果传入的场景为空，则不进行切换
     if (scene == nullptr)
         return;
@@ -154,8 +131,7 @@ void Game::changeScene(Scene *scene)
         return;
 
     // 清理当前场景
-    if (currentScene)
-    {
+    if (currentScene) {
         currentScene->clean();
         delete currentScene;
     }
