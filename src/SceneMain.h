@@ -23,6 +23,7 @@ public:
     void handleEvent(SDL_Event *event) override;
 
 private:
+    // Game 框架
     Game &game;
     Player player;
 

@@ -31,7 +31,7 @@ void SceneMain::handleEvent(SDL_Event *) {
 void SceneMain::keyboardControl(float deltaTime) {
     // 控制主角移动
     auto controlled = false;
-    auto state = SDL_GetKeyboardState(nullptr);
+    const auto state = SDL_GetKeyboardState(nullptr);
     if (state[SDL_SCANCODE_LEFT] || state[SDL_SCANCODE_A]) {
         player.position.x -= player.speed * deltaTime;
         controlled = true;
@@ -68,7 +68,7 @@ void SceneMain::keyboardControl(float deltaTime) {
 }
 
 void SceneMain::render() {
-    SDL_FRect rect = {
+    const SDL_FRect rect = {
         player.position.x,
         player.position.y,
         static_cast<float>(player.width),
